@@ -44,11 +44,14 @@ async function connectDB() {
       app.get('/api/personalizationRules', async (req, res) => {
         const { pageurl, condition_value } = req.query; 
         let query = {};
-        if (pageurl) 
-            query.pageurl = new RegExp(`^${pageurl}$`, 'i'); 
-        if (condition_value) 
-            query.condition_value = new RegExp(`^${condition_value}$`, 'i'); 
-        const queriedPersonalizationRules = await personalizationCollection?.find(query).toArray();
+        let queriedPersonalizationRules;
+        if (pageurl && condition_value) {
+          query.pageurl = new RegExp(`^${pageurl}$`, 'i'); 
+          query.condition_value = new RegExp(`^${condition_value}$`, 'i'); 
+          queriedPersonalizationRules = await personalizationCollection?.find(query).toArray();
+        } else {
+          queriedPersonalizationRules = [];
+        }
         res.json(queriedPersonalizationRules);
       });
     } catch (err) {
