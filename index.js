@@ -2,7 +2,8 @@ import express from 'express';
 import mongodb from 'mongodb';
 import dotenv from 'dotenv';
 import { parseString } from 'xml2js';
-
+import cors from 'cors';
+ 
 const { MongoClient } = mongodb;
 dotenv.config();
 
@@ -12,6 +13,8 @@ const password = encodeURIComponent("Lebara@123");
 
 const app = express();
 const port = 3000;
+
+app.use(cors());
 
 // const url = 'mongodb://localhost:27017';
 const uri = `mongodb+srv://${username}:${password}@apidemo.0znua.mongodb.net/?retryWrites=true&w=majority&appName=apidemo`;
@@ -26,19 +29,25 @@ async function connectDB() {
       await client.connect();
       const db = client.db(dbName);
       console.log('Connected to MongoDB Atlas');
-      const collection = db.collection('users');
-      const users = await collection.find({}).toArray();
-      app.get('/api/users', (req, res) => {
-        res.json(users);
+      const users = db.collection('users');
+      app.get('/api/users', async (req, res) => {
+        const { email, msisdn } = req.query; 
+        let query = {};
+        if (email) 
+          query.email = new RegExp(`^${email}$`, 'i'); 
+        if (msisdn) 
+          query.msisdn = new RegExp(`^${msisdn}$`, 'i'); 
+        const queriedUsers = await users?.find(query).toArray();
+        res.json(queriedUsers);
       });
       const personalizationCollection = db.collection('personalizationRules');
       app.get('/api/personalizationRules', async (req, res) => {
         const { pageurl, condition_value } = req.query; 
         let query = {};
         if (pageurl) 
-            query.pageurl = { $gte: parseString(pageurl) };
+            query.pageurl = new RegExp(`^${pageurl}$`, 'i'); 
         if (condition_value) 
-            query.condition_value = { $gte: parseString(condition_value) };
+            query.condition_value = new RegExp(`^${condition_value}$`, 'i'); 
         const queriedPersonalizationRules = await personalizationCollection?.find(query).toArray();
         res.json(queriedPersonalizationRules);
       });
