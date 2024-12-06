@@ -57,13 +57,19 @@ async function connectDB() {
   const checkOffers = async (userDetails, personalizationCollection, condition_base, condition_value, pageurl) => {
     let query = {};
     let queriedPersonalizationRules = [];
-    if(condition_base && condition_value) {
-      query.condition_base = new RegExp(`^${condition_base}$`, 'i'); 
-      query.condition_value = new RegExp(`^${condition_value}$`, 'i'); 
-      if (pageurl) {
+    if (condition_base === 'country') {
+      if (condition_base && condition_value && pageurl) {
+        query.condition_base = new RegExp(`^${condition_base}$`, 'i'); 
+        query.condition_value = new RegExp(`^${condition_value}$`, 'i'); 
         query.pageurl = new RegExp(`^${pageurl}$`, 'i'); 
+        queriedPersonalizationRules = await personalizationCollection?.find(query).toArray();
+      } else {
+        return [];
       }
-      queriedPersonalizationRules = await personalizationCollection?.find(query).toArray();
+    } else if (condition_base && condition_value) {
+        query.condition_base = new RegExp(`^${condition_base}$`, 'i'); 
+        query.condition_value = new RegExp(`^${condition_value}$`, 'i'); 
+        queriedPersonalizationRules = await personalizationCollection?.find(query).toArray();
     } else {
       const personalizedPlans = await personalizationCollection?.find({}).toArray();
       queriedPersonalizationRules = personalizedPlans?.filter((item) => {
