@@ -1,0 +1,87 @@
+<html>
+
+<head>
+  <title>Personalization Rules</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>Personalization Rules</h1>
+    <form action="" id="personalization-form">
+      <div class="form-group">
+        <label for="personalization-condition_name">Name</label>
+        <input type="text" class="form-control" id="personalization-condition_name">
+      </div>
+      <div class="form-group">
+        <label for="personalization-condition_base">Condition Criteria</label>
+        <select class="form-control" id="personalization-condition_base">
+          <option>context.userCountry</option>
+          <option>User.Plan</option>
+          <option>User.Balance</option>
+          <option>User.DataUsage</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="personalization-condition_comparator">Condition Comparator</label>
+        <select class="form-control" id="personalization-condition_comparator">
+          <option>Equal to</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="personalization-condition_value">value</label>
+        <input type="text" class="form-control" id="personalization-condition_value">
+      </div>
+      <div class="form-group">
+        <label for="personalization-page-url">Page url</label>
+        <input type="text" class="form-control" id="personalization-page-url">
+      </div>
+      <div class="form-group">
+        <label for="personalization-condition_domelement">Dom Element</label>
+        <input type="text" class="form-control" id="personalization-condition_domelement">
+      </div>
+      <div class="form-group">
+        <label for="personalization-content">Personalized Content</label>
+        <textarea class="form-control" id="personalization-content" rows="5"></textarea>
+      </div>
+      
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+<script>
+let personalizationForm = document.getElementById("personalization-form");
+personalizationForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+
+  let personalizationName = document.getElementById("personalization-condition_name").value;
+  let personalizationConditionBase = document.getElementById("personalization-condition_base").value;
+  let personalizationConditionValue = document.getElementById("personalization-condition_value").value;
+  let personalizationPageUrl = document.getElementById("personalization-page-url").value;
+  let personalizationDOMElement = document.getElementById("personalization-condition_domelement").value;
+  let personalizationContent = document.getElementById("personalization-content").value;
+  alert(personalizationPageUrl);
+  fetch("http://localhost:3000/api/insertpersonalizationrules", {
+  method: "POST",
+  body: JSON.stringify({
+  "id": 1,
+  "priority":1,
+  "name": personalizationName,
+  "channel":"web",
+  "condition_base": personalizationConditionBase,
+  "condition_comparator":"=",
+  "condition_value":personalizationConditionValue,
+  "contenttodisplay":personalizationContent,
+  "pageurl":personalizationPageUrl,
+  "domelement":personalizationDOMElement
+})
+});
+});
+
+</script>
+</body>
+
+</html>
