@@ -40,12 +40,12 @@ async function connectDB() {
       });
       const personalizationCollection = db.collection('personalizationRules');
       app.get('/api/personalizationRules', async (req, res) => {
-        const { email, condition_base, condition_value } = req.query; 
+        const { email, condition_base, condition_value, pageurl } = req.query; 
         let queriedPersonalizationRules = [];
         let userQuery = {};
         userQuery.email = new RegExp(`^${email}$`, 'i'); 
         const userDetails = await users?.find(userQuery).toArray();
-        queriedPersonalizationRules = await checkOffers(userDetails, personalizationCollection, condition_base, condition_value);
+        queriedPersonalizationRules = await checkOffers(userDetails, personalizationCollection, condition_base, condition_value, pageurl);
         res.json(queriedPersonalizationRules);
       });
     } catch (err) {
@@ -54,12 +54,15 @@ async function connectDB() {
   }
 
 
-  const checkOffers = async (userDetails, personalizationCollection, condition_base, condition_value) => {
+  const checkOffers = async (userDetails, personalizationCollection, condition_base, condition_value, pageurl) => {
     let query = {};
     let queriedPersonalizationRules = [];
     if(condition_base && condition_value) {
       query.condition_base = new RegExp(`^${condition_base}$`, 'i'); 
       query.condition_value = new RegExp(`^${condition_value}$`, 'i'); 
+      if (pageurl) {
+        query.pageurl = new RegExp(`^${pageurl}$`, 'i'); 
+      }
       queriedPersonalizationRules = await personalizationCollection?.find(query).toArray();
     } else {
       const personalizedPlans = await personalizationCollection?.find({}).toArray();
