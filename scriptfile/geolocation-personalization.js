@@ -15,9 +15,9 @@ document.addEventListener("DOMContentLoaded", function() {
                            const country = countryInfo.country;
                            const currentpage = window.location.href.replace("https://", "");
 						   
-					    const respPersonization = await fetch(
-					    `http://localhost:3000/api/personalizationRules?pageurl=${currentpage}&condition_value=${country}`
-						);
+                           const respPersonization = await fetch(
+                            `http://localhost:3000/api/personalizationRules?condition_base=country&pageurl=${currentpage}&condition_value=${country}`
+                            );
 						const datapr = await respPersonization.json();
 						if (datapr && datapr.length > 0) {
 							document.getElementById(datapr[0].domelement).innerHTML = datapr[0].contenttodisplay;
