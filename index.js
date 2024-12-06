@@ -72,9 +72,11 @@ async function connectDB() {
         queriedPersonalizationRules = await personalizationCollection?.find(query).toArray();
     } else {
       const personalizedPlans = await personalizationCollection?.find({}).toArray();
-      queriedPersonalizationRules = personalizedPlans?.filter((item) => {
-        return item.condition_value === userDetails?.[0].plan;
-      });
+      if (userDetails?.length > 0) {
+        queriedPersonalizationRules = personalizedPlans?.filter((item) => {
+          return item.condition_value === userDetails?.[0].plan;
+        });
+      }
     }
     return queriedPersonalizationRules;
   }
